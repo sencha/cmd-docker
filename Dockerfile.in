@@ -1,0 +1,29 @@
+FROM java:8-jre
+MAINTAINER Josh VanderLinden <codekoala@gmail.com>
+
+RUN apt-get update; apt-get -y upgrade && \
+    apt-get install -y curl ruby unzip && \
+    apt-get autoremove
+
+RUN useradd -m sencha && \
+    cd && cp -R .bashrc .profile /home/sencha && \
+    mkdir -p /code && \
+    chown -R sencha:sencha /home/sencha /code
+
+USER sencha
+ENV HOME /home/sencha
+
+RUN curl -Lo $HOME/cmd.run.zip http://cdn.sencha.com/cmd/${CMD_VER}/no-jre/SenchaCmd-${CMD_VER}-linux-amd64.sh.zip && \
+    unzip -p $HOME/cmd.run.zip > $HOME/cmd-install.run && \
+    chmod +x $HOME/cmd-install.run && \
+    INSTALL4J_ADD_VM_PARAMS="-Djava.awt.headless=true" $HOME/cmd-install.run -q -dir $HOME/Sencha/${CMD_VER} && \
+    rm $HOME/cmd-install.run $HOME/cmd.run.zip
+
+ENV PATH $HOME/Sencha/Cmd/${CMD_VER}/:$PATH
+
+WORKDIR /code
+
+EXPOSE 1841
+
+ENTRYPOINT ["/home/sencha/Sencha/${CMD_VER}/sencha"]
+CMD ["help"]
