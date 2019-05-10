@@ -1,7 +1,7 @@
-CMD_VER := 6.2.2
+CMD_VER := 6.6.0.13
 CMD_VER_SHORT := 6
 
-IMG := sencha/cmd-docker
+IMG := imagehawk/cmd-docker
 
 build:
 	./build.sh
